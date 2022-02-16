@@ -1,3 +1,5 @@
+const glob = require('glob');
+const path = require('path');
 const mix = require('laravel-mix');
 
 /*
@@ -11,7 +13,26 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        //
-    ]);
+for (let file of glob.sync('resources/js/**/*.js')) {
+    let aDirs = file.split('/');
+    aDirs.shift();
+    aDirs.unshift('public');
+    aDirs.pop();
+
+    mix.js(file, aDirs.join('/'))
+    .options({
+        terser: {
+            terserOptions: {
+                keep_classnames: true,
+                keep_fnames: true
+            }
+        }
+    })
+    .version();
+}
+
+for (let file of glob.sync('resources/css/*.css')) {
+    mix.postCss(file, 'public/css', [])
+    .options({processCssUrls: false})
+    .version();
+}

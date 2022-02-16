@@ -1,4 +1,8 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/app.js": "/js/app.js?id=49d93379ba269e371f53",
+    "/js/bootstrap.js": "/js/bootstrap.js?id=97f307f341544cd22f46",
+    "/js/helpers/AlertMessageHandler.js": "/js/helpers/AlertMessageHandler.js?id=eb266da59d6261f58699",
+    "/js/login/LoginController.js": "/js/login/LoginController.js?id=d41d8cd98f00b204e980",
+    "/css/login.css": "/css/login.css?id=ae70ddfe517d9ee047b7",
+    "/css/app.css": "/css/app.css?id=9ab3f0e6f2e142b7b206"
 }
