@@ -15,11 +15,12 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('library_id')->nullable();
+            $table->unsignedBigInteger('template_id')->nullable();
+            $table->unsignedBigInteger('version_id')->nullable();
             $table->unsignedBigInteger('requestor')->nullable();
             $table->unsignedTinyInteger('enforce_signature_order')->default(0);
-            $table->dateTimeTz('next_signature_by')->nullable();
-            $table->dateTimeTz('deadline')->nullable();
+            $table->json('metatags');
+            $table->dateTimeTz('complete_by')->nullable();
             $table->timestamps();
         });
     }

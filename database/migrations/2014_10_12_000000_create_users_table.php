@@ -21,6 +21,10 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->unsignedBigInteger('primary_group_id')->nullable();
             $table->unsignedBigInteger('secondary_group_id')->nullable();
+            $table->string('office')->default('');
+            $table->string('phone')->default('');
+            $table->string('fax')->default('');
+            $table->string('extension')->default('');
             $table->string('visual_signature_file')->default('');
             $table->unsignedTinyInteger('superadmin')->default(0);
             $table->unsignedTinyInteger('suspended')->default(0);

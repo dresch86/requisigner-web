@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'username',
         'password',
+        'office',
+        'phone',
+        'fax',
+        'extension',
         'suspended',
         'superadmin',
         'visual_signature_file'

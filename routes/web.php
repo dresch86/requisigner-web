@@ -27,11 +27,15 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     Route::get('documents/library', 'DocumentsController@library')->name('get-docs-lib');
     Route::get('documents/upload', 'DocumentsController@upload')->name('get-docs-upload');
     Route::get('documents/signing', 'DocumentsController@signing')->name('get-docs-signing');
+    Route::post('documents/upload', 'DocumentsController@library_store')->name('post-docs-upload');
 
     Route::get('profile', 'ProfileController@profile')->name('get-profile');
+    Route::post('profile', 'ProfileController@update')->name('post-profile');
+
     Route::get('signatures', 'SignatureController@signatures')->name('get-signatures');
+    Route::post('signatures', 'SignatureController@update')->name('post-signatures');
 });
 
 Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {
-    
+    Route::get('superadmin/tools', 'AdminController@tools')->name('get-admin-tools');
 });

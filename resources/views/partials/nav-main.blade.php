@@ -1,14 +1,19 @@
-<ul class="nav flex-column quillsigner-sidebar-menu">
-    <li class="nav-item{{ ($menuItem == 'home') ? ' quillsigner-active-item' : '' }}">
+<ul class="nav flex-column requisigner-sidebar-menu">
+    <li class="nav-item{{ ($menuItem == 'home') ? ' requisigner-active-item' : '' }}">
         <a class="nav-link" href="{{ route('get-home') }}">Home</a>
     </li>
-    <li class="nav-item{{ ($menuItem == 'docs_tools') ? ' quillsigner-active-item' : '' }}">
+    @if (auth()->user()->superadmin == 1)
+    <li class="nav-item{{ ($menuItem == 'admin_tools') ? ' requisigner-active-item' : '' }}">
+        <a class="nav-link" href="{{ route('get-admin-tools') }}">Admin</a>
+    </li>
+    @endif
+    <li class="nav-item{{ ($menuItem == 'docs_tools') ? ' requisigner-active-item' : '' }}">
         <a class="nav-link" href="{{ route('get-docs-tools') }}">Documents</a>
     </li>
-    <li class="nav-item{{ ($menuItem == 'my_sigs') ? ' quillsigner-active-item' : '' }}">
+    <li class="nav-item{{ ($menuItem == 'my_sigs') ? ' requisigner-active-item' : '' }}">
         <a class="nav-link" href="{{ route('get-signatures') }}">Signatures</a>
     </li>
-    <li class="nav-item{{ ($menuItem == 'profile') ? ' quillsigner-active-item' : '' }}">
+    <li class="nav-item{{ ($menuItem == 'profile') ? ' requisigner-active-item' : '' }}">
         <a class="nav-link" href="{{ route('get-profile') }}">Profile</a>
     </li>
     <li class="nav-item">
