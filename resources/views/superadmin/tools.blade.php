@@ -12,7 +12,10 @@
         <a class="text-center" href="">Users</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="">Documents</a>
+        <a class="text-center" href="">Groups</a>
+    </div>
+    <div class="w-25 d-flex flex-column p-5 border border-info border-2">
+        <a class="text-center" href="">Files</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
         <a class="text-center" href="">Settings</a>

@@ -17,7 +17,7 @@
         </a>
         <form id="requisigner-login-form" action="{{ url('login') }}" method="POST">
             @csrf
-            <h3 class="form-title text-center">QuillSigner</h3>
+            <h3 class="form-title text-center">Requisigner</h3>
             @if ($errors->any())
             <div id="requisigner-message-box" class="alert alert-danger">
                 {!! implode('<br>', $errors->all()) !!}

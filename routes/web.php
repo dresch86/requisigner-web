@@ -24,10 +24,11 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     Route::get('logout', 'LoginController@logout')->name('logout');
     
     Route::get('documents/tools', 'DocumentsController@tools')->name('get-docs-tools');
-    Route::get('documents/library', 'DocumentsController@library')->name('get-docs-lib');
-    Route::get('documents/upload', 'DocumentsController@upload')->name('get-docs-upload');
     Route::get('documents/signing', 'DocumentsController@signing')->name('get-docs-signing');
-    Route::post('documents/upload', 'DocumentsController@library_store')->name('post-docs-upload');
+
+    Route::get('templates', 'DocumentsController@templates')->name('get-templates');
+    Route::get('templates/form', 'DocumentsController@template_form')->name('get-template-form');
+    Route::post('templates/form', 'DocumentsController@template_store')->name('post-template-form');
 
     Route::get('profile', 'ProfileController@profile')->name('get-profile');
     Route::post('profile', 'ProfileController@update')->name('post-profile');

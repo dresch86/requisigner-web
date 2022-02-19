@@ -19,7 +19,7 @@
             <div>@yield('breadcrumb-bar')</div>
             <div>@yield('content')</div>
         </div>
-        <div id="requisigner-footer-box" class="text-center p-3">&copy; {{ date('Y') }} <a href="https://www.requisigner.io">QuillSigner</a></div>
+        <div id="requisigner-footer-box" class="text-center p-3">&copy; {{ date('Y') }} <a href="https://www.requisigner.io">Requisigner</a></div>
     </div>
 </div>
 @endsection

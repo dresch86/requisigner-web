@@ -30,6 +30,10 @@ class CreateVersionsTable extends Migration
             $table->foreign('template_id')->references('id')->on('templates')->cascadeOnDelete();
             $table->foreign('contributor')->references('id')->on('users')->nullOnDelete();
         });
+
+        Schema::table('templates', function (Blueprint $table) {
+            $table->foreign('head_version')->references('id')->on('versions')->nullOnDelete();
+        });
     }
 
     /**

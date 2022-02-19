@@ -9,7 +9,7 @@ function DocumentUploadClient() {
     this.elDocUploadInput.filepond('storeAsFile', true);
     this.elDocUploadInput.filepond('allowMultiple', false);
     this.elDocUploadInput.filepond('acceptedFileTypes', ['application/pdf']);
-    this.elDocUploadInput.filepond('maxFileSize', QUILLSIGNER_UPLOAD_MAX_SIZE);
+    this.elDocUploadInput.filepond('maxFileSize', REQUISIGNER_UPLOAD_MAX_SIZE);
 
     this.oQuillOps = {
         modules: {
@@ -19,7 +19,7 @@ function DocumentUploadClient() {
                 [{ 'align': [] }],
                 [{ 'size': ['small', false, 'large', 'huge'] }],
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['link', 'image', 'blockquote', 'code-block'],
+                ['link', 'image', 'blockquote'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
                 ['clean']
             ]
@@ -45,7 +45,7 @@ DocumentUploadClient.prototype.postDocument = function(event) {
 
     let sDocName = this.elDocUploadName.val().trim();
     let fdFormData = new FormData(this.elDocUploadForm.get(0));
-    fdFormData.append('document_description', this.qjsDocumentDescr.root.innerHTML)
+    fdFormData.append('document_description', this.qjsDocumentDescr.root.innerHTML);
 
     if (sDocName.length < 3) {
         this.amhAlertHandler.showAlert('danger', 'Document name must be at least 3 characters!');
@@ -55,6 +55,22 @@ DocumentUploadClient.prototype.postDocument = function(event) {
     if (fdFormData.get('document_file').length == 0) {
         this.amhAlertHandler.showAlert('danger', 'You must select a PDF file to upload!');
         return;
+    }
+
+    if (!fdFormData.has('group_read')) {
+        fdFormData.append('group_read', 0);
+    }
+
+    if (!fdFormData.has('group_edit')) {
+        fdFormData.append('group_edit', 0);
+    }
+
+    if (!fdFormData.has('subgroup_read')) {
+        fdFormData.append('subgroup_read', 0);
+    }
+
+    if (!fdFormData.has('subgroup_edit')) {
+        fdFormData.append('subgroup_edit', 0);
     }
 
     this.elDocUploadName.val(sDocName);

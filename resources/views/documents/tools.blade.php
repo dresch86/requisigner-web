@@ -12,10 +12,10 @@
         <a class="text-center" href="{{ route('get-docs-signing') }}">Signing</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="{{ route('get-docs-lib') }}">Library</a>
+        <a class="text-center" href="{{ route('get-templates') }}">Template Library</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="{{ route('get-docs-upload') }}">Upload</a>
+        <a class="text-center" href="{{ route('get-template-form') }}">Upload Template</a>
     </div>
 </div>
 @endsection
