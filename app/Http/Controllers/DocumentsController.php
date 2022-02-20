@@ -11,6 +11,7 @@ use App\Models\Template;
 use App\HelperFunctions;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -63,6 +64,8 @@ class DocumentsController extends Controller
                     $head_vers = $doc_major_ver . '.' . $doc_minor_ver . '.' . $doc_patch_ver;
                     $json = HelperFunctions::metatag_json_string($request->input('document_metatags'));
 
+                    DB::beginTransaction();
+
                     $template = Template::create([
                         'name' => $doc_name,
                         'filename' => $request->file('document_file')->getClientOriginalName(),
@@ -92,7 +95,9 @@ class DocumentsController extends Controller
 
                     $local_directory = 'private/templates/' . $template->id;
                     Storage::disk('local')->makeDirectory($local_directory);
-                    $path = Storage::disk('local')->putFileAs($local_directory, $request->file('document_file'), (bin2hex($checksum) . '.pdf'));
+                    Storage::disk('local')->putFileAs($local_directory, $request->file('document_file'), (bin2hex($checksum) . '.pdf'));
+
+                    DB::commit();
 
                     return response()->json([
                         'code' => 200,
@@ -111,7 +116,9 @@ class DocumentsController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::critical($e);
+
             return response()->json([
                 'code' => 500,
                 'result' => 'A system error has occurred!'
@@ -128,7 +135,25 @@ class DocumentsController extends Controller
     }
 
     public function templates(Request $request) {
-        return view('documents.templates-view', ['menuItem' => 'docs_tools']);
+        try {
+            $primary_group_ancestors = HelperFunctions::get_parent_groups(auth()->user()->primary_group_id);
+            $secondary_group_ancestors = HelperFunctions::get_parent_groups(auth()->user()->secondary_group_id);
+
+            $templates = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'templates.description', 'templates.metatags')
+            ->leftJoin('versions', 'templates.head_version', '=', 'versions.template_id')
+            ->leftJoin('users', 'templates.owner', '=', 'users.id')
+            ->where('templates.owner', '=', auth()->user()->id)
+            ->where('templates.child_read', '=', 1)
+            ->orWhere(function($query) {
+                $query->where('templates.group_read', '=', 1);
+                $query->where('templates.child_read', '=', 0);
+            })
+            ->paginate(15);
+
+            return view('documents.templates-view', ['menuItem' => 'docs_tools', 'templates' => $templates]);
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
     }
 
     public function template_form(Request $request) {

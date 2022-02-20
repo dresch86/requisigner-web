@@ -9,16 +9,16 @@
 @section('content')
 <div class="d-flex flex-row justify-content-between">
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="">Users</a>
+        <a class="text-center" href="{{ route('get-create-user-form') }}">Users</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="">Groups</a>
+        <a class="text-center" href="{{ route('get-create-group-form') }}">Groups</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
         <a class="text-center" href="">Files</a>
     </div>
     <div class="w-25 d-flex flex-column p-5 border border-info border-2">
-        <a class="text-center" href="">Settings</a>
+        <a class="text-center" href="{{ route('get-settings-form') }}">Settings</a>
     </div>
 </div>
 @endsection

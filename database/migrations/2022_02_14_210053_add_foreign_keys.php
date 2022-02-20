@@ -14,11 +14,11 @@ class AddForeignKeys extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('primary_group_id')->references('id')->on('groups')->nullOnDelete();
-            $table->foreign('secondary_group_id')->references('id')->on('groups')->nullOnDelete();
+            $table->foreign('group_id')->references('id')->on('groups')->nullOnDelete();
         });
 
         Schema::table('groups', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('groups')->nullOnDelete();
             $table->foreign('manager_id')->references('id')->on('users')->nullOnDelete();
         });
 
@@ -33,7 +33,8 @@ class AddForeignKeys extends Migration
         });
 
         Schema::table('templates', function (Blueprint $table) {
-            $table->foreign('owner')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('owner_user')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('owner_group')->references('id')->on('groups')->nullOnDelete();
         });
     }
 

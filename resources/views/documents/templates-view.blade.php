@@ -8,7 +8,42 @@
 </nav>
 @endsection
 @section('content')
-<div class="d-flex flex-row">
-
+<div class="d-flex flex-column">
+    <div></div>
+    <div>
+        <table class="border table table-light table-striped">
+            <thead>
+                <tr class="fw-bold table-dark text-center">
+                    <th>&nbsp;</th>
+                    <th>Template</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if($templates->count() > 0)
+            @foreach ($templates as $template)
+                <tr>
+                    <td data-template-id="{{ $template->id }}"></td>
+                    <td class="text-center">{{ $template->name }}</td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span>Version: v{{ $template->semver }}</span>
+                            <span>Owner: {{ $template->owner_name }}</span>
+                            <span>Description: {!! $template->description !!}</span>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+            @else
+                <tr class="requisigner-no-data">
+                    <td colspan="5">There are templates available for you to use. Please <a href="{{ route('get-template-form') }}">upload</a> one!</td>
+                </tr>
+            @endif
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex flex-row justify-content-end">
+        {{ $templates->links() }}
+    </div>
 </div>
 @endsection

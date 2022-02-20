@@ -16,9 +16,10 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedInteger('parent_id')->default(0);
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('manager_id')->nullable()->default(0);
             $table->mediumText('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

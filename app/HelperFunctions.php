@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use App\Models\Group;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -10,6 +12,18 @@ class HelperFunctions
         $matches = [];
         $max_upload_size_val = preg_match('/(\d+.*)/i', trim(ini_get('upload_max_filesize')), $matches);   
         return ($matches[1] . 'B');
+    }
+
+    public static function get_parent_groups($group_id) {
+        $group = Group::select('id', 'parent_id')->where('id', '=', $group_id)->first();
+        $ancestors = [];
+
+        while (!is_null($group) && !is_null($group->parent_id)) {
+            $ancestors[] = $group->parent_id;
+            $group = Group::select('parent_id')->where('id', '=', $group->parent_id)->first();
+        }
+
+        return $ancestors;
     }
 
     public static function metatag_json_string($string) {

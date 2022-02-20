@@ -39,4 +39,13 @@ Route::middleware(['auth', 'suspension'])->group(function () {
 
 Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {
     Route::get('superadmin/tools', 'AdminController@tools')->name('get-admin-tools');
+
+    Route::get('superadmin/settings', 'AdminController@settings_form')->name('get-settings-form');
+    Route::post('superadmin/settings', 'AdminController@settings_store')->name('post-settings-form');
+
+    Route::get('superadmin/users/create', 'AdminController@user_form')->name('get-create-user-form');
+    Route::post('superadmin/users/create', 'AdminController@user_store')->name('post-create-user-form');
+
+    Route::get('superadmin/groups/create', 'AdminController@group_form')->name('get-create-group-form');
+    Route::post('superadmin/groups/create', 'AdminController@group_store')->name('post-create-group-form');
 });

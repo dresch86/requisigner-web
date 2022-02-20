@@ -18,11 +18,12 @@ class CreateTemplatesTable extends Migration
             $table->string('name');
             $table->string('filename');
             $table->unsignedBigInteger('head_version')->nullable();
-            $table->unsignedBigInteger('owner')->nullable();
+            $table->unsignedBigInteger('owner_user')->nullable();
+            $table->unsignedBigInteger('owner_group')->nullable();
             $table->unsignedTinyInteger('group_read')->default(0);
             $table->unsignedTinyInteger('group_edit')->default(0);
-            $table->unsignedTinyInteger('child_read')->default(0);
-            $table->unsignedTinyInteger('child_edit')->default(0);
+            $table->unsignedTinyInteger('world_read')->default(0);
+            $table->unsignedTinyInteger('world_edit')->default(0);
             $table->mediumText('description');
             $table->json('metatags');
             $table->softDeletes();
