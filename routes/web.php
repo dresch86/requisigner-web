@@ -43,8 +43,17 @@ Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {
     Route::get('superadmin/settings', 'AdminController@settings_form')->name('get-settings-form');
     Route::post('superadmin/settings', 'AdminController@settings_store')->name('post-settings-form');
 
+    Route::get('superadmin/users', 'AdminController@users')->name('get-users');
+    Route::get('superadmin/users/{id}', 'AdminController@user')->whereNumber('id')
+    ->name('get-user-by-id');
+
+    Route::post('superadmin/users/delete', 'AdminController@user_delete')->name('post-delete-user');
     Route::get('superadmin/users/create', 'AdminController@user_form')->name('get-create-user-form');
     Route::post('superadmin/users/create', 'AdminController@user_store')->name('post-create-user-form');
+
+    Route::get('superadmin/groups', 'AdminController@groups')->name('get-groups');
+    Route::get('superadmin/groups/{id}', 'AdminController@group')->whereNumber('id')
+    ->name('get-group-by-id');
 
     Route::get('superadmin/groups/create', 'AdminController@group_form')->name('get-create-group-form');
     Route::post('superadmin/groups/create', 'AdminController@group_store')->name('post-create-group-form');

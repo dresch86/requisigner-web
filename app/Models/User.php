@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Group;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +25,7 @@ class User extends Authenticatable
         'email',
         'username',
         'password',
+        'group_id',
         'office',
         'phone',
         'fax',
@@ -50,4 +53,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the group record associated with the user.
+     */
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }

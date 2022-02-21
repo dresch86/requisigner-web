@@ -67,7 +67,7 @@
             <div class="col-12 col-lg-6">
                 <div class="form-group row g-0">
                     <div class="form-group col-lg-3 g-0">
-                        <label for="requisigner-document-shared" class="col-form-label">Own Group</label>
+                        <label for="requisigner-document-shared" class="col-form-label">Group Share</label>
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="requisigner-group-read" name="group_read" value="1">
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <div class="form-group col-lg-3 g-0">
-                        <label for="requisigner-document-shared" class="col-form-label">Sub Group</label>
+                        <label for="requisigner-document-shared" class="col-form-label">World Share</label>
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="requisigner-subgroup-read" name="subgroup_read" value="1">
