@@ -29,6 +29,9 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     Route::get('templates', 'DocumentsController@templates')->name('get-templates');
     Route::get('templates/form', 'DocumentsController@template_form')->name('get-template-form');
     Route::post('templates/form', 'DocumentsController@template_store')->name('post-template-form');
+    Route::post('templates/delete', 'DocumentsController@template_delete')->name('post-template-del');
+    Route::get('templates/blank/{id}', 'DocumentsController@template_blank')->whereNumber('id')
+    ->name('get-template-blank');
 
     Route::get('profile', 'ProfileController@profile')->name('get-profile');
     Route::post('profile', 'ProfileController@update')->name('post-profile');

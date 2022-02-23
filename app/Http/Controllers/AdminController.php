@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
+use Mews\Purifier\Facades\Purifier;
+
 class AdminController extends Controller
 {
     public function settings_form(Request $request) {
@@ -20,11 +22,82 @@ class AdminController extends Controller
     }
 
     public function group_store(Request $request) {
-        
+        try {
+            $errors = [];
+
+            $group_name = trim($request->input('group_name'));
+            $group_description = trim($request->input('group_description'));
+            $group_parent_id = filter_var(trim($request->input('group_parent')), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+
+            if (strlen($group_name) < 3) {
+                $errors[] = 'Group name must be at least 3 characters!';
+            }
+
+            if (is_null($group_parent_id)) {
+                $errors[] = 'Group parent id must be numeric!';
+            }
+
+            $group_check = Group::where('name', '=', $group_name)->get();
+
+            if (!$group_check->isEmpty()) {
+                $errors[] = 'Group already exists!';
+            }
+
+            $parent_check = Group::where('id', '=', $group_parent_id)->get();
+
+            if ($parent_check->isEmpty()) {
+                $errors[] = 'Group parent no longer exists!';
+            }
+
+            if (count($errors) == 0) {
+                if (strlen($group_description) > 0) {
+                    // Safeguards against XSS
+                    Purifier::clean($group_description);
+                }
+
+                $group = Group::create([
+                    'name' => $group_name,
+                    'parent_id' => $group_parent_id,
+                    'manager_id' => auth()->user()->id,
+                    'description' => $group_description
+                ]);
+    
+                $group->save();
+    
+                if ($group) {
+                    return response()->json([
+                        'code' => 200,
+                        'result' => 'Group created!'
+                    ]);
+                } else {
+                    return response()->json([
+                        'code' => 500,
+                        'result' => 'An error occurred in adding the user!'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'result' => $errors
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::critical($e);
+
+            return response()->json([
+                'code' => 500,
+                'result' => 'A system error occurred!'
+            ]);
+        }
     }
 
     public function group_form(Request $request) {
-        return view('superadmin.groups.create', ['menuItem' => 'admin_tools']);
+        try {
+            $groups = Group::select('id', 'name')->get();
+            return view('superadmin.groups.create', ['menuItem' => 'admin_tools', 'groups' => $groups]);
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
     }
 
     public function user_delete(Request $request) {

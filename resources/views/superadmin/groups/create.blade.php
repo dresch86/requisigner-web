@@ -21,19 +21,31 @@
 @include('partials.main-alert')
 <form id="requisigner-create-group-form" action="{{ route('post-create-group-form') }}" method="post" enctype="multipart/form-data" autocomplete="off" class="container">
     @csrf
-    <div class="row mb-3">
-        <label for="requisigner-group-name" class="col-sm-2 col-form-label">Group Name<span class="text-danger">*</span></label>
-        <div class="col-lg-6">
-            <input type="text" class="form-control" id="requisigner-group-name" name="group_name" required>
-        </div>
-    </div>
     <div class="row">
-        <div class="col-12 col-lg-6">
-            <label for="requisigner-group-description" class="col-form-label">Description</label>
+        <div class="col-12 col-lg-4">
+            <div>
+                <label for="requisigner-group-name" class="form-label">Group Name<span class="text-danger">*</span></label>
+                <div class="col-12">
+                    <input type="text" class="form-control" id="requisigner-group-name" name="group_name" required>
+                </div>
+            </div>
+            <div>
+                <label for="requisigner-group-parent" class="form-label">Parent Group</label>
+                <div class="col-12">
+                    <select id="requisigner-group-parent" name="group_parent" class="form-select">
+                        @foreach ($groups as $group)
+                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            <label for="requisigner-group-description" class="form-label">Description</label>
             <div id="requisigner-group-description" class="requisigner-rich-text-box"></div>
         </div>
     </div>
-    <div class="d-flex flex-row justify-content-end">
+    <div class="d-flex flex-row justify-content-end mt-2">
         <button class="btn btn-primary btn-sm requisigner-btn-save">Save</button>
     </div>
 </form>

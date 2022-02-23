@@ -2,11 +2,15 @@
     "/js/app.js": "/js/app.js?id=49d93379ba269e371f53",
     "/js/bootstrap.js": "/js/bootstrap.js?id=97f307f341544cd22f46",
     "/js/documents/DocumentUploadClient.js": "/js/documents/DocumentUploadClient.js?id=d30718f9473f4f88efc6",
+    "/js/documents/TemplateFormClient.js": "/js/documents/TemplateFormClient.js?id=d41d8cd98f00b204e980",
+    "/js/documents/TemplatesListClient.js": "/js/documents/TemplatesListClient.js?id=18817b7eab7225f0b2e2",
     "/js/helpers/AlertMessageHandler.js": "/js/helpers/AlertMessageHandler.js?id=eb266da59d6261f58699",
     "/js/login/LoginController.js": "/js/login/LoginController.js?id=d41d8cd98f00b204e980",
+    "/js/signatures/SignatureClient.js": "/js/signatures/SignatureClient.js?id=2818334894910ce33e1f",
     "/js/superadmin/groups/GroupCreateClient.js": "/js/superadmin/groups/GroupCreateClient.js?id=41d0fc00ce66a3b20f57",
+    "/js/superadmin/groups/GroupDeleteClient.js": "/js/superadmin/groups/GroupDeleteClient.js?id=d41d8cd98f00b204e980",
     "/js/superadmin/users/UserCreateClient.js": "/js/superadmin/users/UserCreateClient.js?id=2ef7ac29e6838ba5c359",
     "/js/superadmin/users/UserDeleteClient.js": "/js/superadmin/users/UserDeleteClient.js?id=ae184b66d07af00008fe",
     "/css/login.css": "/css/login.css?id=4679ad6f73d7cdebc930",
-    "/css/app.css": "/css/app.css?id=b54d675499c98d59a2cf"
+    "/css/app.css": "/css/app.css?id=4996e4be4805d28f2abd"
 }

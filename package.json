@@ -10,6 +10,8 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@babel/plugin-transform-async-to-generator": "^7.16.8",
+        "@babel/preset-env": "^7.16.11",
         "axios": "^0.21",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",

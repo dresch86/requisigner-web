@@ -70,11 +70,12 @@ class DocumentsController extends Controller
                         'name' => $doc_name,
                         'filename' => $request->file('document_file')->getClientOriginalName(),
                         'head_version' => null,
-                        'owner' => auth()->user()->id,
+                        'owner_user' => auth()->user()->id,
+                        'owner_group' => auth()->user()->group_id,
                         'group_read' => $group_read,
                         'group_edit' => $group_edit,
-                        'child_read' => $subgroup_read,
-                        'child_edit' => $subgroup_read,
+                        'world_read' => $subgroup_read,
+                        'world_edit' => $subgroup_read,
                         'description' => $doc_description,
                         'metatags' => $json
                     ]);
@@ -126,6 +127,24 @@ class DocumentsController extends Controller
         }
     }
 
+    public function template_blank(Request $request) {
+        try {
+            $template = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'templates.description', 'templates.metatags')
+            ->leftJoin('versions', 'templates.head_version', '=', 'versions.template_id')
+            ->leftJoin('users', 'templates.owner_user', '=', 'users.id')
+            ->where('id', '=', $request->id)
+            ->first();
+
+            if (!is_null($template)) {
+                return view('documents.template-blank', ['menuItem' => 'docs_tools', 'template' => $template]);
+            } else {
+                // Error 404....not found
+            }
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
+    }
+
     public function tools(Request $request) {
         return view('documents.tools', ['menuItem' => 'docs_tools']);
     }
@@ -136,17 +155,14 @@ class DocumentsController extends Controller
 
     public function templates(Request $request) {
         try {
-            $primary_group_ancestors = HelperFunctions::get_parent_groups(auth()->user()->primary_group_id);
-            $secondary_group_ancestors = HelperFunctions::get_parent_groups(auth()->user()->secondary_group_id);
-
             $templates = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'templates.description', 'templates.metatags')
             ->leftJoin('versions', 'templates.head_version', '=', 'versions.template_id')
-            ->leftJoin('users', 'templates.owner', '=', 'users.id')
-            ->where('templates.owner', '=', auth()->user()->id)
-            ->where('templates.child_read', '=', 1)
+            ->leftJoin('users', 'templates.owner_user', '=', 'users.id')
+            ->where('templates.owner_user', '=', auth()->user()->id)
+            ->orWhere('templates.world_read', '=', 1)
             ->orWhere(function($query) {
+                $query->where('templates.owner_group', '=', auth()->user()->group_id);
                 $query->where('templates.group_read', '=', 1);
-                $query->where('templates.child_read', '=', 0);
             })
             ->paginate(15);
 

@@ -46,9 +46,13 @@ body > #requisigner-page-wrapper {
     height: 5rem;
 }
 
-#requisigner-package-details > tbody > tr > td {
-    text-align: center;
-    vertical-align: middle;
+#requisigner-signature-pad {
+    width: 340px;
+    height: 100px;
+    background-color: #e1e1e1;
+    border-top: 1px solid #007bff;
+    border-left: 1px solid #007bff;
+    border-right: 1px solid #007bff;
 }
 
 .requisigner-flex-gsa-1 {
@@ -218,6 +222,29 @@ body > #requisigner-page-wrapper {
 .requisigner-report-box > div:last-child {
     color: black;
     padding: 0.5rem;
+}
+
+.requisigner-btn-bottom {
+    width: 340px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.requisigner-btn-bottom:focus {
+    color: white;
+    background-color: #007bff;
+}
+
+.requisigner-btn-bottom:focus,
+.requisigner-btn-bottom:active,
+.requisigner-btn-bottom:active:focus {
+    box-shadow: none;
+}
+
+.requisigner-pdf-icon {
+    color: red;
+    font-size: 3rem;
+    cursor: pointer;
 }
 
 @media only screen and (min-width: 480px) {
