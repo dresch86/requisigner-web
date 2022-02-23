@@ -14,13 +14,13 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Documents</li>
         <li class="breadcrumb-item">Templates Library</li>
-        <li class="breadcrumb-item active" aria-current="page">{{ $template->name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">View Template</li>
     </ol>
 </nav>
 @endsection
 @section('content')
 @include('partials.main-alert')
-<div class="d-flex flex-column">
-
+<div class="d-flex flex-column h-100">
+    <iframe src="{{ route('get-template-pdf-viewer', ['id' => $template_id]) }}" title="PDF Viewer" class="h-100"></iframe>
 </div>
 @endsection

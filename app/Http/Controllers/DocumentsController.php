@@ -19,6 +19,20 @@ use Mews\Purifier\Facades\Purifier;
 
 class DocumentsController extends Controller
 {
+    public function pdf_viewer(Request $request) {
+        try {
+            $template = Template::select('id', 'name')->where('id', '=', $request->id)->first();
+
+            if (!is_null($template)) {
+                return view('documents.pdf-viewer', ['menuItem' => 'docs_tools', 'template' => $template]);
+            } else {
+                // Error 404....not found?
+            }
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
+    }
+
     public function template_store(Request $request) {
         try {
             $errors = [];
@@ -127,19 +141,41 @@ class DocumentsController extends Controller
         }
     }
 
-    public function template_blank(Request $request) {
+    public function template_pdf(Request $request) {
         try {
-            $template = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'templates.description', 'templates.metatags')
-            ->leftJoin('versions', 'templates.head_version', '=', 'versions.template_id')
-            ->leftJoin('users', 'templates.owner_user', '=', 'users.id')
-            ->where('id', '=', $request->id)
-            ->first();
+            $version = Version::select('templates.filename', 'versions.semver', DB::raw('HEX(`checksum`) AS version_checksum'))
+            ->leftJoin('templates', 'versions.template_id', '=', 'templates.id')
+            ->where(function($query) use ($request) {
+                $query->where('versions.template_id', '=', $request->id);
+                $query->where('versions.is_head', '=', 1);
+            })->first();
 
-            if (!is_null($template)) {
-                return view('documents.template-blank', ['menuItem' => 'docs_tools', 'template' => $template]);
+            if (!is_null($version)) {
+                $checksum = strtolower($version->version_checksum);
+                $version_file = 'private/templates/' . $request->id . '/' . $checksum . '.pdf';
+
+                if (Storage::disk('local')->exists($version_file)) {
+                    $filename = substr($version->filename, 0, (strrpos($version->filename, '.')));
+                    $filename .= '_v' . $version->semver . '.pdf';
+    
+                    return response()->make(Storage::get($version_file), 200, [
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'inline; filename="' . $filename . '"'
+                    ]);
+                } else {
+                    Log::critical('Missing version file [' . $checksum . '.pdf]');
+                }
             } else {
                 // Error 404....not found
             }
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
+    }
+
+    public function template_blank(Request $request) {
+        try {
+            return view('documents.template-blank', ['menuItem' => 'docs_tools', 'template_id' => $request->id]);
         } catch (\Exception $e) {
             Log::critical($e);
         }

@@ -17,7 +17,7 @@
         <div id="requisigner-account-box" class="d-flex flex-column">@include('partials.nav-header')</div>
         <div id="requisigner-workspace-box" class="d-flex flex-column px-3 requisigner-flex-gsa-1">
             <div>@yield('breadcrumb-bar')</div>
-            <div>@yield('content')</div>
+            <div class="requisigner-flex-gsa-1">@yield('content')</div>
         </div>
         <div id="requisigner-footer-box" class="text-center p-3">&copy; {{ date('Y') }} <a href="https://www.requisigner.io">Requisigner</a></div>
     </div>

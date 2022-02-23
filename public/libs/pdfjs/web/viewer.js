@@ -72,7 +72,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   defaultUrl: {
-    value: "",
+    value: null,
     kind: OptionKind.VIEWER
   },
   defaultZoomValue: {
@@ -225,7 +225,7 @@ const defaultOptions = {
     kind: OptionKind.WORKER
   },
   workerSrc: {
-    value: "../build/pdf.worker.js",
+    value: REQUISIGNER_PDFJS_WORKER,
     kind: OptionKind.WORKER
   }
 };
@@ -239,7 +239,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   };
   defaultOptions.sandboxBundleSrc = {
-    value: "../build/pdf.sandbox.js",
+    value: REQUISIGNER_PDFJS_SANDBOX,
     kind: OptionKind.VIEWER
   };
   defaultOptions.renderer.kind += OptionKind.PREFERENCE;
@@ -15627,7 +15627,7 @@ function getViewerConfiguration() {
     errorWrapper,
     printContainer: document.getElementById("printContainer"),
     openFileInputName: "fileInput",
-    debuggerScriptPath: "./debugger.js"
+    debuggerScriptPath: REQUISIGNER_PDFJS_DEBUGGER
   };
 }
 

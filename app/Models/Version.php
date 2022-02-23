@@ -26,4 +26,12 @@ class Version extends Model
         'contributor',
         'is_head'
     ];
+
+    /**
+     * Get the template details.
+     */
+    public function template()
+    {
+        return $this->belongsTo(Template::class, 'template_id');
+    }
 }
