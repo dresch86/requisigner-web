@@ -6,6 +6,7 @@
     "/js/documents/TemplatesListClient.js": "/js/documents/TemplatesListClient.js?id=18817b7eab7225f0b2e2",
     "/js/helpers/AlertMessageHandler.js": "/js/helpers/AlertMessageHandler.js?id=eb266da59d6261f58699",
     "/js/login/LoginController.js": "/js/login/LoginController.js?id=d41d8cd98f00b204e980",
+    "/js/misc/ProfileClient.js": "/js/misc/ProfileClient.js?id=440a325d91e501a65eda",
     "/js/signatures/SignatureClient.js": "/js/signatures/SignatureClient.js?id=34cc70d4651f8eb80184",
     "/js/superadmin/groups/GroupCreateClient.js": "/js/superadmin/groups/GroupCreateClient.js?id=41d0fc00ce66a3b20f57",
     "/js/superadmin/groups/GroupDeleteClient.js": "/js/superadmin/groups/GroupDeleteClient.js?id=d41d8cd98f00b204e980",
