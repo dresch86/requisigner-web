@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Group;
+use App\Models\Signature;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -31,8 +32,7 @@ class User extends Authenticatable
         'fax',
         'extension',
         'suspended',
-        'superadmin',
-        'visual_signature_file'
+        'superadmin'
     ];
 
     /**
@@ -60,5 +60,13 @@ class User extends Authenticatable
     public function group()
     {
         return $this->belongsTo(Group::class);
+    }
+
+    /**
+     * Get the signature associated with the user.
+     */
+    public function signature()
+    {
+        return $this->hasOne(Signature::class, 'user_id');
     }
 }

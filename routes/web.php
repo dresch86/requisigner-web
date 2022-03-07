@@ -41,8 +41,12 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     Route::get('profile', 'ProfileController@profile')->name('get-profile');
     Route::post('profile', 'ProfileController@update')->name('post-profile');
 
-    Route::get('signatures', 'SignatureController@signatures')->name('get-signatures');
-    Route::post('signatures', 'SignatureController@update')->name('post-signatures');
+    Route::get('signatures/{id}', 'SignatureController@signatures')->whereNumber('id')
+    ->name('get-signatures');
+    Route::post('signatures/{id}/visible', 'SignatureController@update_visible')->whereNumber('id')
+    ->name('post-visible-signature');
+    Route::get('signatures/{id}/visible/cpts', 'SignatureController@signature_cpts')->whereNumber('id')
+    ->name('get-visible-signature-cpts');
 });
 
 Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {

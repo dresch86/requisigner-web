@@ -24,11 +24,12 @@ class Template extends Model
         'name',
         'filename',
         'head_version',
-        'owner',
+        'owner_user',
+        'owner_group',
         'group_read',
         'group_edit',
-        'child_read',
-        'child_edit',
+        'world_read',
+        'world_edit',
         'description',
         'metatags'
     ];

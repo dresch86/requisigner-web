@@ -225,12 +225,11 @@ body > #requisigner-page-wrapper {
 }
 
 .requisigner-btn-bottom {
-    width: 340px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
 
-.requisigner-btn-bottom:focus {
+.requisigner-btn-bottom:active {
     color: white;
     background-color: #007bff;
 }

@@ -21,7 +21,7 @@ class Document extends Model
         'template_id',
         'version_id',
         'requestor',
-        'enforce_signature_order',
+        'require_signature_order',
         'metatags',
         'complete_by'
     ];

@@ -11,7 +11,7 @@
         <a class="nav-link" href="{{ route('get-docs-tools') }}">Documents</a>
     </li>
     <li class="nav-item{{ ($menuItem == 'my_sigs') ? ' requisigner-active-item' : '' }}">
-        <a class="nav-link" href="{{ route('get-signatures') }}">Signatures</a>
+        <a class="nav-link" href="{{ route('get-signatures', ['id' => auth()->user()->id]) }}">Signatures</a>
     </li>
     <li class="nav-item{{ ($menuItem == 'profile') ? ' requisigner-active-item' : '' }}">
         <a class="nav-link" href="{{ route('get-profile') }}">Profile</a>

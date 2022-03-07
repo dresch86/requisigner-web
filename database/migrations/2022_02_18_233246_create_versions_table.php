@@ -34,6 +34,10 @@ class CreateVersionsTable extends Migration
         Schema::table('templates', function (Blueprint $table) {
             $table->foreign('head_version')->references('id')->on('versions')->nullOnDelete();
         });
+
+        Schema::table('documents', function (Blueprint $table) {
+            $table->foreign('version_id')->references('id')->on('versions')->nullOnDelete();
+        });
     }
 
     /**

@@ -1,5 +1,16 @@
 @extends('layout')
+@push('meta')
+<meta name="csrf_token" content="{!! csrf_token() !!}" />
+@endpush
+@push('css')
+<link rel="stylesheet" href="{{ url('libs/holdon/holdon.min.css') }}">
+@endpush
 @push('scripts')
+<script>
+    const REQUISIGNER_VSIG_CPTS_URL = "{{ route('get-visible-signature-cpts', ['id' => $user_id]) }}";
+    const REQUISIGNER_VSIG_HANDLER_URL = "{{ route('post-visible-signature', ['id' => $user_id]) }}";
+</script>
+<script src="{{ url('libs/holdon/holdon.min.js') }}"></script>
 <script src="{{ url('libs/signature-pad/signature_pad.umd.min.js') }}"></script>
 <script src="{{ url('libs/sodium-plus/sodium-plus.min.js') }}"></script>
 <script src="{{ url(mix('js/signatures/SignatureClient.js')) }}"></script>
@@ -12,15 +23,19 @@
 </nav>
 @endsection
 @section('content')
+@include('partials.main-alert')
 <div>
     <p>This tool panel allows you to configure two types of signatures. The visisble signature is the representation of your signature in an image, and is added to each form you sign. The digital signature is a specialized entity that involves a private key that should be saved locally and a public key that is automatically added to each document to indicate that you signed it. Your private key should be stored locally and not shared since it is used to add your official signature to a PDF form. When you load a locally stored private key into this panel, it is <strong>NOT</strong> sent to the server.</p>
     <div class="container">
         <div class="row">
             <div class="col-12 col-lg-5">
                 <div id="requisigner-sig-caption" class="font-weight-bold">Visible Signature</div>
-                <div class="d-flex flex-column justify-content-start">
+                <div class="d-inline-flex flex-column justify-content-start">
                     <canvas id="requisigner-signature-pad"></canvas>
-                    <button id="requisigner-vsig-clear-btn" type="button" class="btn btn-outline-primary requisigner-btn-bottom">Clear</button>
+                    <div class="d-flex flex-row">
+                        <button id="requisigner-vsig-clear-btn" class="w-50 btn btn-outline-primary requisigner-btn-bottom">Clear</button>
+                        <button id="requisigner-vsig-save-btn" class="w-50 btn btn-outline-primary requisigner-btn-bottom">Save</button>
+                    </div>
                 </div>
             </div>
             <div class="col-12 col-lg-5">

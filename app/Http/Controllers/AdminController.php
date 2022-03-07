@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Group;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
@@ -177,6 +178,8 @@ class AdminController extends Controller
             }
 
             if (count($errors) == 0) {
+                DB::beginTransaction();
+
                 $user = User::create([
                     'name' => $name,
                     'username' => $username,
@@ -194,11 +197,23 @@ class AdminController extends Controller
                 $user->save();
     
                 if ($user) {
+                    $sig_directory = 'private/signatures/' . $user->id;
+                    Storage::disk('local')->makeDirectory($sig_directory);
+
+                    $signature = Signature::create([
+                        'user_id' => $user->id
+                    ]);           
+                    $signature->save();
+
+                    DB::commit();
+
                     return response()->json([
                         'code' => 200,
                         'result' => 'User created!'
                     ]);
                 } else {
+                    DB::rollBack();
+
                     return response()->json([
                         'code' => 500,
                         'result' => 'An error occurred in adding the user!'

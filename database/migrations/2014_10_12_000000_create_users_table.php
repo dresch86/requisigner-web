@@ -24,7 +24,6 @@ class CreateUsersTable extends Migration
             $table->string('phone')->default('');
             $table->string('fax')->default('');
             $table->string('extension')->default('');
-            $table->string('visual_signature_file')->default('');
             $table->unsignedTinyInteger('superadmin')->default(0);
             $table->unsignedTinyInteger('suspended')->default(0);
             $table->rememberToken();

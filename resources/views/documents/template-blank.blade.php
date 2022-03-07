@@ -21,6 +21,11 @@
 @section('content')
 @include('partials.main-alert')
 <div class="d-flex flex-column h-100">
+    <p>Please fill out the necessary fields below. Once the form has been filled out and submitted, your digital signature can be applied using the <a href="{{ route('get-docs-signing') }}">signing tool panel</a>. All documents must be filled out and submitted before signing takes place.</p>
     <iframe src="{{ route('get-template-pdf-viewer', ['id' => $template_id]) }}" title="PDF Viewer" class="h-100"></iframe>
+    <div class="d-flex flex-row justify-content-end mt-2">
+        <button class="btn btn-primary btn-sm requisigner-btn-save me-2">Select Signatures</button>
+        <button class="btn btn-primary btn-sm requisigner-btn-save">Save</button>
+    </div>
 </div>
 @endsection

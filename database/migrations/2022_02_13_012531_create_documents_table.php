@@ -18,7 +18,7 @@ class CreateDocumentsTable extends Migration
             $table->unsignedBigInteger('template_id')->nullable();
             $table->unsignedBigInteger('version_id')->nullable();
             $table->unsignedBigInteger('requestor')->nullable();
-            $table->unsignedTinyInteger('enforce_signature_order')->default(0);
+            $table->unsignedTinyInteger('require_signature_order')->default(0);
             $table->json('metatags');
             $table->dateTimeTz('complete_by')->nullable();
             $table->timestamps();

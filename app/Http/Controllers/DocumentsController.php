@@ -7,12 +7,14 @@ use Carbon\Carbon;
 use App\Models\Version;
 use App\Models\Document;
 use App\Models\Template;
+use App\Models\Placeholder;
 
 use App\HelperFunctions;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 use Mews\Purifier\Facades\Purifier;
@@ -109,15 +111,52 @@ class DocumentsController extends Controller
                     $template->save();
 
                     $local_directory = 'private/templates/' . $template->id;
-                    Storage::disk('local')->makeDirectory($local_directory);
-                    Storage::disk('local')->putFileAs($local_directory, $request->file('document_file'), (bin2hex($checksum) . '.pdf'));
+                    $version_basename = bin2hex($checksum) . '.pdf';
 
-                    DB::commit();
+                    $dir = Storage::disk('local')->makeDirectory($local_directory);
+                    $file = Storage::disk('local')->putFileAs($local_directory, $request->file('document_file'), $version_basename);
 
-                    return response()->json([
-                        'code' => 200,
-                        'result' => 'Template added!'
-                    ]);
+                    $sig_placeholder_uri = config('pdf_microservice_url') . '/templates/version/placeholders/' . $template->id . '/' . $version_basename;
+                    $response = Http::get($sig_placeholder_uri);
+
+                    if ($response->ok()) {
+                        foreach ($response->json() as $field_name) {
+                            $placeholder = Placeholder::create([
+                                'version_id' => $version->id,
+                                'pdf_name' => $field_name
+                            ]);
+                            
+                            $placeholder->save();
+                        }
+
+                        DB::commit();
+
+                        return response()->json([
+                            'code' => 200,
+                            'result' => 'Template added!'
+                        ]);
+                    } else {
+                        if ($response->status() == 400) {
+                            Storage::disk('local')->delete($file);
+                            Storage::disk('local')->delete($dir);
+
+                            DB::rollBack();
+
+                            return response()->json([
+                                'code' => 400,
+                                'result' => 'The PDF you uploaded was either corrupted or not standards compliant, therefore it was deleted!'
+                            ]);
+
+                        } else {
+                            DB::rollBack();
+                            Log::critical('PDF microservice error occurred');
+
+                            return response()->json([
+                                'code' => 500,
+                                'result' => 'A system error has occurred!'
+                            ]);
+                        }
+                    }
                 } else {
                     return response()->json([
                         'code' => 409,

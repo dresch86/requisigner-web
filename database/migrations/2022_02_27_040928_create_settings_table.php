@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSigneesTable extends Migration
+class CreateSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateSigneesTable extends Migration
      */
     public function up()
     {
-        Schema::create('signees', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_id');
-            $table->unsignedBigInteger('signee_id');
-            $table->unsignedBigInteger('placeholder_id');
-            $table->dateTimeTz('signed_on')->nullable();
+            $table->string('setting');
+            $table->string('value');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateSigneesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('signees');
+        Schema::dropIfExists('settings');
     }
 }

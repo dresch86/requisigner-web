@@ -44,7 +44,11 @@
                             <span>{{ $template->name }}</span>
                             <span>Version: v{{ $template->semver }}</span>
                             <span>Owner: {{ $template->owner_name }}</span>
-                            <span class="text-primary" role="button" data-control="show_description">View Description</span>
+                            <div class="d-flex flex-row">
+                                <span class="d-inline-flex text-primary" role="button" data-control="show_description">View Description</span>
+                                <span class="mx-2">|</span>
+                                <span class="d-inline-flex text-primary" role="button" data-control="set_signatures">Set Signatures</span>
+                            </div>
                             <span class="d-none">{!! $template->description !!}</span>
                         </div>
                     </td>
