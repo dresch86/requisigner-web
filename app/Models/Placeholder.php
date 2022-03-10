@@ -22,4 +22,12 @@ class Placeholder extends Model
         'friendly_name',
         'order'
     ];
+
+    /**
+     * Get the template version this placeholder is registered to.
+     */
+    public function version()
+    {
+        return $this->belongsTo(Version::class, 'version_id');
+    }
 }

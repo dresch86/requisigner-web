@@ -19,6 +19,7 @@ class CreateVersionsTable extends Migration
             $table->string('semver')->default('v1.0.0');
             $table->unsignedBigInteger('contributor')->nullable();
             $table->unsignedTinyInteger('is_head')->default(0);
+            $table->unsignedTinyInteger('enforce_sig_order')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

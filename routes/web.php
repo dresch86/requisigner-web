@@ -22,6 +22,7 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth', 'suspension'])->group(function () {
     Route::get('logout', 'LoginController@logout')->name('logout');
+    Route::post('search/user', 'UserController@search')->name('post-users-search');
     
     Route::get('documents/tools', 'DocumentsController@tools')->name('get-docs-tools');
     Route::get('documents/signing', 'DocumentsController@signing')->name('get-docs-signing');
@@ -37,6 +38,11 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     ->name('get-template-pdf-viewer');
     Route::get('templates/blank/{id}', 'DocumentsController@template_blank')->whereNumber('id')
     ->name('get-template-blank');
+
+    Route::get('templates/version/{id}', 'DocumentsController@version')->whereNumber('id')
+    ->name('get-version');
+    Route::post('templates/version/{id}', 'DocumentsController@version_update')->whereNumber('id')
+    ->name('post-version');
 
     Route::get('profile', 'ProfileController@profile')->name('get-profile');
     Route::post('profile', 'ProfileController@update')->name('post-profile');
@@ -58,6 +64,8 @@ Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {
     Route::get('superadmin/users', 'AdminController@users')->name('get-users');
     Route::get('superadmin/users/{id}', 'AdminController@user')->whereNumber('id')
     ->name('get-user-by-id');
+    Route::post('superadmin/users/{id}', 'AdminController@user_update')->whereNumber('id')
+    ->name('post-modify-user');
 
     Route::post('superadmin/users/delete', 'AdminController@user_delete')->name('post-delete-user');
     Route::get('superadmin/users/create', 'AdminController@user_form')->name('get-create-user-form');
@@ -66,6 +74,8 @@ Route::middleware(['auth', 'suspension', 'superadmin'])->group(function () {
     Route::get('superadmin/groups', 'AdminController@groups')->name('get-groups');
     Route::get('superadmin/groups/{id}', 'AdminController@group')->whereNumber('id')
     ->name('get-group-by-id');
+    Route::post('superadmin/groups/{id}', 'AdminController@group_update')->whereNumber('id')
+    ->name('post-modify-group');
 
     Route::get('superadmin/groups/create', 'AdminController@group_form')->name('get-create-group-form');
     Route::post('superadmin/groups/create', 'AdminController@group_store')->name('post-create-group-form');

@@ -33,4 +33,12 @@ class Template extends Model
         'description',
         'metatags'
     ];
+
+    /**
+     * Get the group that owns this template.
+     */
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'owner_group');
+    }
 }

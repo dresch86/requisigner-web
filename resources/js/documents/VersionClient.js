@@ -1,6 +1,6 @@
 const AlertMessageHandler = require('../helpers/AlertMessageHandler');
 
-function TemplateFormClient() {
+function VersionClient() {
     this.amhAlertHandler = new AlertMessageHandler();
     this.amhAlertHandler.init('#requisigner-main-alert-box');
 
@@ -8,66 +8,26 @@ function TemplateFormClient() {
         theme: 'sk-circle'
     };
 
-    this.elBSModal = jQuery('#requisigner-modal');
-    this.bsModalWindow = new bootstrap.Modal(this.elBSModal.get(0));
+    this.elVersionForm = jQuery('#requisigner-template-version-form');
+    this.elVersionForm.submit(this.updateVersion.bind(this));
 
-    this.elModalBody = this.elBSModal.find('.modal-body');
-    this.sCSRFToken = jQuery('meta[name="csrf_token"]').attr('content');
-
-    this.elSigneeList = jQuery('#requisigner_signees_list');
-    this.elPlaceholderList = jQuery('#requisigner-placeholder-list');
-    this.elPlaceholderList.find('> tbody > tr > td:last-child > input').keyup(this.querySignees.bind(this));
-
-    jQuery('button.requisigner-btn-save').click(this.postDocument.bind(this));
-    jQuery('button.requisigner-btn-done').click(this.collectUsers.bind(this));
-    jQuery('button.requisigner-btn-sigs').click(() => {
-        this.bsModalWindow.show();
+    let i = 1;
+    this.elVersionForm.find('select.requisigner-placeholder-order').each((index, orderMenu) => {
+        orderMenu.value = i;
+        ++i;
     });
+
+    this.sCSRFToken = jQuery('meta[name="csrf_token"]').attr('content');
+    this.elEnforceSigOrder = jQuery('#requisigner-enforce-sig-order');
 }
 
-TemplateFormClient.prototype.querySignees = function(event) {
-    let sQuery = jQuery(event.target).val().trim();
+VersionClient.prototype.updateVersion = function(event) {
+    event.preventDefault();
 
-    if (sQuery.length > 3) {
-        let fdFormData = new FormData();
-        fdFormData.append('query_name', sQuery);
-
-        jQuery.ajax({
-            type: 'POST',
-            url: REQUISIGNER_USER_SEARCH_URL,
-            data: fdFormData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN' : this.sCSRFToken
-            }
-        }).done(response => {
-            if (response.code == 200) {
-                let elOption = null;
-                this.elSigneeList.empty();
-
-                for (let i=0; i < response.result.length; i++) {
-                    elOption = jQuery(document.createElement('option'));
-                    elOption.data('uid', response.result[i][0]);
-                    elOption.attr('value', response.result[i][1]);
-                    this.elSigneeList.append(elOption);
-                }
-            } else {
-                
-            }
-        });
-    }
-}
-
-TemplateFormClient.prototype.collectUsers = function(event) {
-    this.bsModalWindow.hide();
-}
-
-TemplateFormClient.prototype.postDocument = function(event) {
     let aOrders = [];
     let oVersionFields = {
         placeholders : [],
-        enforce_order : this.elEnforceSigOrder.is(':checked')
+        enforce_order : this.elEnforceSigOrder.is(":checked")
     };
 
     let elPlaceholders = this.elVersionForm.find('> table > tbody > tr');
@@ -119,5 +79,5 @@ TemplateFormClient.prototype.postDocument = function(event) {
 }
 
 jQuery(document).ready(() => {
-    let tfcTemplateFormHandler = new TemplateFormClient();
+    let vcVersionFormHandler = new VersionClient();
 });

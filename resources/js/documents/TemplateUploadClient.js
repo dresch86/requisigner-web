@@ -1,6 +1,6 @@
 const AlertMessageHandler = require('../helpers/AlertMessageHandler');
 
-function DocumentUploadClient() {
+function TemplateUploadClient() {
     this.elDocUploadName = jQuery('#requisigner-document-name');
     this.elDocUploadInput = jQuery('#requisigner-document-upload');
     this.elDocUploadForm = jQuery('#requisigner-document-upload-form');
@@ -40,7 +40,7 @@ function DocumentUploadClient() {
     this.elDocUploadForm.submit(this.postDocument.bind(this));
 }
 
-DocumentUploadClient.prototype.postDocument = function(event) {
+TemplateUploadClient.prototype.postDocument = function(event) {
     event.preventDefault();
 
     let sDocName = this.elDocUploadName.val().trim();
@@ -86,8 +86,8 @@ DocumentUploadClient.prototype.postDocument = function(event) {
         contentType: false
     }).done(response => {
         if (response.code == 200) {
-            this.amhAlertHandler.showAlert('success', response.result);
-            this.elDocUploadForm.get(0).reset();
+            // Redirect to configure version placeholders and signing preferences
+            window.location.href = response.result;
         } else {
             if (Array.isArray(response.result)) {
                 this.amhAlertHandler.showAlert('danger', response.result.join('<br>'));
@@ -107,5 +107,5 @@ jQuery(document).ready(() => {
     // Needed for checking file extension
     FilePond.registerPlugin(FilePondPluginFileValidateType);
 
-    let cacAttachmentsHandler = new DocumentUploadClient();
+    let cacAttachmentsHandler = new TemplateUploadClient();
 });

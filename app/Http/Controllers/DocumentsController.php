@@ -21,20 +21,6 @@ use Mews\Purifier\Facades\Purifier;
 
 class DocumentsController extends Controller
 {
-    public function pdf_viewer(Request $request) {
-        try {
-            $template = Template::select('id', 'name')->where('id', '=', $request->id)->first();
-
-            if (!is_null($template)) {
-                return view('documents.pdf-viewer', ['menuItem' => 'docs_tools', 'template' => $template]);
-            } else {
-                // Error 404....not found?
-            }
-        } catch (\Exception $e) {
-            Log::critical($e);
-        }
-    }
-
     public function template_store(Request $request) {
         try {
             $errors = [];
@@ -115,32 +101,21 @@ class DocumentsController extends Controller
 
                     $dir = Storage::disk('local')->makeDirectory($local_directory);
                     $file = Storage::disk('local')->putFileAs($local_directory, $request->file('document_file'), $version_basename);
+                    $result = PDFServiceController::register_pdf_signature_placeholders($template->id, $version->id, $version_basename);
 
-                    $sig_placeholder_uri = config('pdf_microservice_url') . '/templates/version/placeholders/' . $template->id . '/' . $version_basename;
-                    $response = Http::get($sig_placeholder_uri);
-
-                    if ($response->ok()) {
-                        foreach ($response->json() as $field_name) {
-                            $placeholder = Placeholder::create([
-                                'version_id' => $version->id,
-                                'pdf_name' => $field_name
-                            ]);
-                            
-                            $placeholder->save();
-                        }
-
+                    if ($result == 200) {
                         DB::commit();
 
                         return response()->json([
                             'code' => 200,
-                            'result' => 'Template added!'
+                            'result' => route('get-version', ['id' => $version->id])
                         ]);
                     } else {
-                        if ($response->status() == 400) {
+                        DB::rollBack();
+
+                        if ($result == 400) {
                             Storage::disk('local')->delete($file);
                             Storage::disk('local')->delete($dir);
-
-                            DB::rollBack();
 
                             return response()->json([
                                 'code' => 400,
@@ -148,7 +123,6 @@ class DocumentsController extends Controller
                             ]);
 
                         } else {
-                            DB::rollBack();
                             Log::critical('PDF microservice error occurred');
 
                             return response()->json([
@@ -214,25 +188,30 @@ class DocumentsController extends Controller
 
     public function template_blank(Request $request) {
         try {
-            return view('documents.template-blank', ['menuItem' => 'docs_tools', 'template_id' => $request->id]);
+            $template = Template::select('head_version')
+            ->where('id', '=', $request->id)
+            ->first();
+
+            $version = Version::with('placeholders')
+            ->where('id', '=', $template->head_version)
+            ->first();
+
+            return view('documents.template-blank', [
+                'menuItem' => 'docs_tools', 
+                'template_id' => $request->id,
+                'version' => $version
+            ]);
         } catch (\Exception $e) {
             Log::critical($e);
         }
     }
 
-    public function tools(Request $request) {
-        return view('documents.tools', ['menuItem' => 'docs_tools']);
-    }
-
-    public function signing(Request $request) {
-        return view('documents.signing-list', ['menuItem' => 'docs_tools']);
-    }
-
     public function templates(Request $request) {
         try {
-            $templates = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'templates.description', 'templates.metatags')
+            $templates = Template::select('templates.id', 'templates.name', 'versions.semver', 'templates.filename', 'users.name AS owner_name', 'groups.name AS group_name', 'templates.description', 'templates.metatags')
             ->leftJoin('versions', 'templates.head_version', '=', 'versions.template_id')
             ->leftJoin('users', 'templates.owner_user', '=', 'users.id')
+            ->leftJoin('groups', 'templates.owner_group', '=', 'groups.id')
             ->where('templates.owner_user', '=', auth()->user()->id)
             ->orWhere('templates.world_read', '=', 1)
             ->orWhere(function($query) {
@@ -249,5 +228,110 @@ class DocumentsController extends Controller
 
     public function template_form(Request $request) {
         return view('documents.template-form', ['menuItem' => 'docs_tools']);
+    }
+
+    public function version_update(Request $request) {
+        try {
+            $version_data = $request->json()->all();
+            $placeholder_ordinal = [];
+            $placeholder_success = 0;
+
+            DB::beginTransaction();
+
+            foreach ($version_data['placeholders'] as $placeholder) {
+                if (!in_array($placeholder['order'], $placeholder_ordinal)) {
+                    $placeholder_success += Placeholder::where('id', '=', $placeholder['id'])
+                    ->update([
+                        'friendly_name' => $placeholder['friendly_name'],
+                        'order' => $placeholder['order']
+                    ]);
+    
+                    $placeholder_ordinal[] = $placeholder['order'];
+                }
+            }
+
+            if (count($version_data['placeholders']) == count($placeholder_ordinal)) {
+                $version_result = Version::where('id', '=', $request->id)
+                ->update([
+                    'enforce_sig_order' => $version_data['enforce_order']
+                ]);
+
+                if (($version_result == 1) && ($placeholder_success == count($version_data['placeholders']))) {
+                    DB::commit();
+
+                    return response()->json([
+                        'code' => 200,
+                        'result' => 'Template version updated!'
+                    ]);
+                } else {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'code' => 400,
+                        'result' => 'Failed to update template version!'
+                    ]);
+                }
+            } else {
+                DB::rollBack();
+
+                return response()->json([
+                    'code' => 400,
+                    'result' => 'Signature order must not be duplicated!'
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::critical($e);
+
+            return response()->json([
+                'code' => 500,
+                'result' => 'A system error has occurred!'
+            ]);
+        }
+    }
+
+    public function version(Request $request) {
+        try {
+            $version = Version::with('template', 'placeholders')
+            ->where('id', '=', $request->id)->first();
+
+            $select_html = '<select class="form-select requisigner-placeholder-order">' . "\n";
+
+            for ($i = 0; $i < $version->placeholders->count(); $i++) {
+                $select_html .= '<option value="' . ($i+1) . '">' . ($i+1) . '</option>' . "\n";
+            }
+
+            $select_html .= '</select>' . "\n";
+
+            return view('documents.version-form', [
+                'menuItem' => 'docs_tools',
+                'version' => $version,
+                'order_select_menu' => $select_html
+            ]);
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
+    }
+
+    public function pdf_viewer(Request $request) {
+        try {
+            $template = Template::select('id', 'name')->where('id', '=', $request->id)->first();
+
+            if (!is_null($template)) {
+                return view('documents.pdf-viewer', ['menuItem' => 'docs_tools', 'template' => $template]);
+            } else {
+                // Error 404....not found?
+            }
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
+    }
+
+    public function tools(Request $request) {
+        return view('documents.tools', ['menuItem' => 'docs_tools']);
+    }
+
+    public function signing(Request $request) {
+        return view('documents.signing-list', ['menuItem' => 'docs_tools']);
     }
 }

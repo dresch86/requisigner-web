@@ -22,6 +22,12 @@
 @endsection
 @section('content')
 @include('partials.main-alert')
+<div class="d-flex flex-row justify-content-end py-2">
+    <div class="col-xs-3 pe-2">
+        <input type="text" id="requisigner-search" class="form-control" name="requisigner_search" placeholder="Search string...">
+    </div>
+    <button type="button" class="btn btn-primary"><i class="bi bi-search"></i></button>
+</div>
 <div class="d-flex flex-column">
     <div></div>
     <div>
@@ -29,7 +35,9 @@
             <thead>
                 <tr class="fw-bold table-dark text-center">
                     <th style="width: 40px;">&nbsp;</th>
-                    <th>Description</th>
+                    <th>Template</th>
+                    <th style="width: 40px;">Add</th>
+                    <th style="width: 40px;">Edit</th>
                 </tr>
             </thead>
             <tbody class="align-middle">
@@ -41,9 +49,8 @@
                     </td>
                     <td>
                         <div class="d-flex flex-column">
-                            <span>{{ $template->name }}</span>
-                            <span>Version: v{{ $template->semver }}</span>
-                            <span>Owner: {{ $template->owner_name }}</span>
+                            <span class="fw-bold">{{ $template->name }} (v{{ $template->semver }})</span>
+                            <span>Owner: {{ $template->owner_name }} / {{ $template->group_name }}</span>
                             <div class="d-flex flex-row">
                                 <span class="d-inline-flex text-primary" role="button" data-control="show_description">View Description</span>
                                 <span class="mx-2">|</span>
@@ -51,6 +58,12 @@
                             </div>
                             <span class="d-none">{!! $template->description !!}</span>
                         </div>
+                    </td>
+                    <td class="text-center">
+                        <a href=""><i class="bi bi-file-earmark-plus display-6"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href=""><i class="bi bi-info-circle display-6"></i></a>
                     </td>
                 </tr>
             @endforeach

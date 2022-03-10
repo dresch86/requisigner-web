@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Template;
+use App\Models\Placeholder;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,7 +25,8 @@ class Version extends Model
         'semver',
         'checksum',
         'contributor',
-        'is_head'
+        'is_head',
+        'enforce_sig_order'
     ];
 
     /**
@@ -33,5 +35,13 @@ class Version extends Model
     public function template()
     {
         return $this->belongsTo(Template::class, 'template_id');
+    }
+
+    /**
+     * Get the signature placeholders for this version.
+     */
+    public function placeholders()
+    {
+        return $this->hasMany(Placeholder::class, 'version_id')->orderBy('order');;
     }
 }
