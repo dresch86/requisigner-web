@@ -1,7 +1,7 @@
 {
     "/js/app.js": "/js/app.js?id=c824d2a67e3395bb7637",
     "/js/bootstrap.js": "/js/bootstrap.js?id=b0c7dba2222ac8f17bef",
-    "/js/documents/TemplateFormClient.js": "/js/documents/TemplateFormClient.js?id=053f95bb10f0c0cd85f9",
+    "/js/documents/TemplateFormClient.js": "/js/documents/TemplateFormClient.js?id=4085b4f6f96ab4445f34",
     "/js/documents/TemplatesListClient.js": "/js/documents/TemplatesListClient.js?id=0e8f8e04e50bd49afa2e",
     "/js/documents/TemplateUploadClient.js": "/js/documents/TemplateUploadClient.js?id=401b9fb7ed3382d7f14d",
     "/js/documents/VersionClient.js": "/js/documents/VersionClient.js?id=c46e133aebd3ef45e03c",
@@ -16,5 +16,5 @@
     "/js/superadmin/users/UserDeleteClient.js": "/js/superadmin/users/UserDeleteClient.js?id=e530eac6c7f2a4db6a76",
     "/js/superadmin/users/UserModifyClient.js": "/js/superadmin/users/UserModifyClient.js?id=9d9cc0c6c44f59e90d82",
     "/css/login.css": "/css/login.css?id=4679ad6f73d7cdebc930",
-    "/css/app.css": "/css/app.css?id=9feb842bb2ba710bb586"
+    "/css/app.css": "/css/app.css?id=06c03c8abcb65bb2c319"
 }

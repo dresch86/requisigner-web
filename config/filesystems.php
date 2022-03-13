@@ -35,6 +35,11 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'docs' => [
+            'driver' => 'local',
+            'root' => env('PDF_STORAGE_DIR'),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

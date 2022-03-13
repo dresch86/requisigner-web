@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 
+use App\Models\Signee;
 use App\Models\Version;
 use App\Models\Document;
 use App\Models\Template;
@@ -188,7 +189,7 @@ class DocumentsController extends Controller
 
     public function template_blank(Request $request) {
         try {
-            $template = Template::select('head_version')
+            $template = Template::select('name', 'head_version')
             ->where('id', '=', $request->id)
             ->first();
 
@@ -199,6 +200,7 @@ class DocumentsController extends Controller
             return view('documents.template-blank', [
                 'menuItem' => 'docs_tools', 
                 'template_id' => $request->id,
+                'template_name' => $template->name,
                 'version' => $version
             ]);
         } catch (\Exception $e) {
@@ -327,11 +329,140 @@ class DocumentsController extends Controller
         }
     }
 
+    public function assign(Request $request) {
+        try {
+            $errors = [];
+            $document_details = $request->json()->all();
+
+            $title = trim($document_details['title']);
+            $due_date = trim($document_details['due_date']);
+            $version_id = filter_var(trim($document_details['version_id']), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+
+            if ($version_id === null) {
+                $errors[] = 'Invalid template version submitted!';
+            }
+
+            if (strlen($title) < 4) {
+                $errors[] = 'Title must be a minimum of 4 characters!';
+            }
+
+            if (!is_array($document_details['signees'])) {
+                $errors[] = 'Invalid signee list!';
+            } else {
+                if (count($document_details['signees']) == 0) {
+                    $errors[] = 'You must specify at least 1 signee!';
+                }
+            }
+
+            if (!is_array($document_details['metatags'])) {
+                $errors[] = 'Invalid metatag list!';
+            }
+
+            if (!empty($due_date)) {
+                if (Carbon::canBeCreatedFromFormat($due_date, 'm-d-Y g:i A')) {
+                    $due_date = Carbon::createFromFormat('m-d-Y g:i A', $due_date)->format('Y-m-d H:i:s');
+                } else {
+                    $errors[] = 'Invalid due date!';
+                }
+            } else {
+                $due_date = null;
+            }
+
+            if (preg_match('/^[A-Za-z0-9+\/]+={0,2}$/', $document_details['pdf_document']) !== 1) {
+                $errors[] = 'Invalid PDF document!';
+            } else {
+                $document_details['pdf_document'] = base64_decode($document_details['pdf_document']);
+            }
+
+            if (count($errors) == 0) {
+                $file_hash = sha1($document_details['pdf_document'], true);
+                DB::beginTransaction();
+
+                $valid_placeholders = [];
+                $placeholders = Placeholder::where('version_id', '=', $version_id)->get();
+
+                foreach ($placeholders as $placeholder) {
+                    $valid_placeholders[] = $placeholder->id;
+                }
+
+                $document = Document::create([
+                    'version_id' => $version_id,
+                    'requestor' => auth()->user()->id,
+                    'title' => $title,
+                    'checksum' => $file_hash,
+                    'metatags' => json_encode($document_details['metatags']),
+                    'complete_by' => $due_date
+                ]);
+
+                $document->save();
+                $signees_to_add = [];
+                $now = Carbon::now()->format('Y-m-d H:i:s');
+
+                foreach ($document_details['signees'] as $signee) {
+                    if (in_array($signee['placeholder'], $valid_placeholders)) {
+                        $signees_to_add[] = [
+                            'document_id' => $document->id,
+                            'user_id' => $signee['user_id'],
+                            'placeholder_id' => $signee['placeholder'],
+                            'signed_on' => null,
+                            'created_at' => $now, 
+                            'updated_at' => $now
+                        ];
+                    }
+                }
+                
+                if (count($signees_to_add) == count($valid_placeholders)) {
+                    Signee::insert($signees_to_add);
+                    $pdf_file = bin2hex($file_hash) . '.pdf';
+                    Storage::disk('docs')->put($pdf_file, $document_details['pdf_document']);
+                    DB::commit();
+    
+                    return response()->json([
+                        'code' => 200,
+                        'result' => 'Document registered for signing!'
+                    ]);
+                } else {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'code' => 400,
+                        'result' => 'Invalid signature placeholders detected!'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'result' => $errors
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::critical($e);
+
+            return response()->json([
+                'code' => 500,
+                'result' => 'A system error occurred!'
+            ]);
+        }
+    }
+
     public function tools(Request $request) {
         return view('documents.tools', ['menuItem' => 'docs_tools']);
     }
 
     public function signing(Request $request) {
-        return view('documents.signing-list', ['menuItem' => 'docs_tools']);
+        try {
+            $documents = Document::with('version', 'owner')
+            ->with([
+                'signees' => function ($query) {
+                    $query->where('user_id', '=', auth()->user()->id);
+                }
+            ])
+            ->paginate(15);
+
+            return view('documents.signing-list', ['menuItem' => 'docs_tools', 'documents' => $documents]);
+        } catch (\Exception $e) {
+            Log::critical($e);
+        }
     }
 }

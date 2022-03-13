@@ -29,7 +29,6 @@
     <button type="button" class="btn btn-primary"><i class="bi bi-search"></i></button>
 </div>
 <div class="d-flex flex-column">
-    <div></div>
     <div>
         <table id="requisigner-templates-list" class="border table table-light table-striped">
             <thead>

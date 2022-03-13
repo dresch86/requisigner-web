@@ -23,13 +23,12 @@ class AddForeignKeys extends Migration
         });
 
         Schema::table('documents', function (Blueprint $table) {
-            $table->foreign('template_id')->references('id')->on('templates')->nullOnDelete();
             $table->foreign('requestor')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::table('signees', function (Blueprint $table) {
             $table->foreign('document_id')->references('id')->on('documents')->cascadeOnDelete();
-            $table->foreign('signee_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
 
         Schema::table('templates', function (Blueprint $table) {

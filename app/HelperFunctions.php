@@ -37,4 +37,10 @@ class HelperFunctions
 
         return json_encode($tags);
     }
+
+    public static function convertDatetimeField($db_datetime, $new_format)
+    {
+        $db_field = Carbon::createFromFormat('Y-m-d H:i:s', $db_datetime);
+        return $db_field->format($new_format);
+    }
 }

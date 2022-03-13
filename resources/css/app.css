@@ -200,6 +200,13 @@ body > #requisigner-page-wrapper {
     height: 15rem;
 }
 
+.requisigner-datetime-input {
+    text-indent: 2rem;
+    background-repeat: no-repeat;
+    background-position: center left 5px;
+    background-image: url('../libs/bootstrap-icons/calendar.svg');
+}
+
 .requisigner-report-box {
     width: 100%;
     display: flex;

@@ -25,6 +25,7 @@ Route::middleware(['auth', 'suspension'])->group(function () {
     Route::post('search/user', 'UserController@search')->name('post-users-search');
     
     Route::get('documents/tools', 'DocumentsController@tools')->name('get-docs-tools');
+    Route::post('documents/assign', 'DocumentsController@assign')->name('post-docs-assign');
     Route::get('documents/signing', 'DocumentsController@signing')->name('get-docs-signing');
 
     Route::get('templates', 'DocumentsController@templates')->name('get-templates');

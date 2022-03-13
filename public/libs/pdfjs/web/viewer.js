@@ -1135,6 +1135,34 @@ const PDFViewerApplication = {
     }
   },
 
+  async getPDFBytes() {
+    if (this._saveInProgress) {
+      return;
+    }
+
+    this._saveInProgress = true;
+    await this.pdfScriptingManager.dispatchWillSave();
+
+    try {
+      this._ensureDownloadComplete();
+
+      const data = await this.pdfDocument.saveDocument();
+      const blob = new Blob([data], {
+        type: "application/pdf"
+      });
+      
+      return blob;
+    } catch (reason) {
+      console.error(`Error when saving the document: ${reason.message}`);
+      await this.download({
+        sourceEventType
+      });
+    } finally {
+      await this.pdfScriptingManager.dispatchDidSave();
+      this._saveInProgress = false;
+    }
+  },
+
   downloadOrSave(options) {
     if (this.pdfDocument?.annotationStorage.size > 0) {
       this.save(options);

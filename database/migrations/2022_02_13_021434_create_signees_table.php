@@ -16,7 +16,7 @@ class CreateSigneesTable extends Migration
         Schema::create('signees', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('document_id');
-            $table->unsignedBigInteger('signee_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('placeholder_id');
             $table->dateTimeTz('signed_on')->nullable();
             $table->timestamps();

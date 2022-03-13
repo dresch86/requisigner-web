@@ -8,7 +8,48 @@
 </nav>
 @endsection
 @section('content')
-<div class="d-flex flex-row">
-
+<div class="d-flex flex-column">
+    <div>
+        <table id="requisigner-documents-list" class="border table table-light table-striped">
+            <thead>
+                <tr class="fw-bold table-dark text-center">
+                    <th>Document</th>
+                    <th style="width: 40px;">Add</th>
+                    <th style="width: 40px;">Edit</th>
+                </tr>
+            </thead>
+            <tbody class="align-middle">
+            @if($documents->count() > 0)
+            @foreach ($documents as $document)
+                <tr data-document-id="{{ $document->id }}">
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold">{{ $document->title }}</span>
+                            <span>Requestor: {{ $document->owner->name }} / {{ $document->owner->group->name }}</span>
+                            <div class="d-flex flex-row">
+                                <span class="d-inline-flex text-primary" role="button" data-control="show_description">View Description</span>
+                            </div>
+                            <span class="d-none"></span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <a href=""><i class="bi bi-file-earmark-plus display-6"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href=""><i class="bi bi-info-circle display-6"></i></a>
+                    </td>
+                </tr>
+            @endforeach
+            @else
+                <tr class="requisigner-no-data text-center">
+                    <td colspan="5">There are no documents assigned to you.</td>
+                </tr>
+            @endif
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex flex-row justify-content-end">
+        {{ $documents->links() }}
+    </div>
 </div>
 @endsection

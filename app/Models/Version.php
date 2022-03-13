@@ -42,6 +42,6 @@ class Version extends Model
      */
     public function placeholders()
     {
-        return $this->hasMany(Placeholder::class, 'version_id')->orderBy('order');;
+        return $this->hasMany(Placeholder::class, 'version_id')->orderBy('order');
     }
 }
